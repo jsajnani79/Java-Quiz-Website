@@ -1,0 +1,47 @@
+package QuizProject.QuestionPackage;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import QuizProject.DBConnection;
+
+public class PictureResponseQuestion extends Question{
+	
+	public PictureResponseQuestion(int id, DBConnection connection){
+		super(id, connection);
+	}
+	
+	public void createModelObject(String backgroundText, String questionText, String pictureURL, String actualAnswer) {
+		this.createModelObject(backgroundText, questionText, pictureURL, null, null, actualAnswer);
+	}
+	
+	protected void createModelObject(String backgroundText, String questionText, String pictureURL, ArrayList<String> possibleAnswers, ArrayList<Object> additionalParameters, String actualAnswer) {
+		ArrayList<Object> parameters = new ArrayList<Object>(Arrays.asList());
+
+		if (additionalParameters != null) {
+			parameters.addAll(additionalParameters);
+		}
+
+		super.createModelObject(backgroundText, questionText, pictureURL, possibleAnswers, parameters);
+		
+		ResponseAnswer ans = new ResponseAnswer(0, this.getConnection());
+		ArrayList<String> actualAnswers = new ArrayList<String>();
+		actualAnswers.add(actualAnswer);
+		ans.createModelObject(this.getID(), -1, actualAnswers);
+	}
+	
+	public int getMaxScore(){
+		return 1;
+	}
+	
+	public int getScore(Object obj){
+		if(!(obj instanceof String)){ 
+			System.out.println("Error in PictureResponseQuestion.getScore, -1 was returned");
+			return -1;
+		}
+		String currAnswer = (String) obj;
+		currAnswer = currAnswer.toLowerCase();
+		ArrayList<Integer> answerIDs = this.getAnswerIDs();
+		return new PictureResponseAnswer(answerIDs.get(0),this.getConnection()).getScore(currAnswer);
+	}
+}

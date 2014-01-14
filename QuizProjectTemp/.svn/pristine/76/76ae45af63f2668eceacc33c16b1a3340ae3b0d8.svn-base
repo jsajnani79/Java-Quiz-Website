@@ -1,0 +1,24 @@
+package QuizProject.QuestionPackage;
+
+import QuizProject.DBConnection;
+
+public class MatchingAnswer extends Answer {
+
+	public MatchingAnswer(int id, DBConnection connection) {
+		super(id, connection);
+	}
+	
+	public String getAnswerContent(){
+		return this.getString("answer_content");
+	}
+	
+	public int getMapIndex(){
+		return this.getInt("map_index");
+	}
+	
+	public int getScore(int answer){
+		if (Integer.parseInt(this.getAnswerContent()) == answer) return 1;
+		return 0;
+	}
+
+}

@@ -1,0 +1,14 @@
+package Servlets;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Utilities {
+
+	public static String convertLongToDate(long dateCreated){
+		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+		Date resultdate = new Date(dateCreated);
+		return sdf.format(resultdate);
+	}
+	
+}

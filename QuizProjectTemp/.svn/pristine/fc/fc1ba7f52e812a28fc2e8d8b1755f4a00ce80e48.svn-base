@@ -1,0 +1,209 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1" %>
+    <%@ page import="java.util.ArrayList" %>
+    <%@ page import="QuizProject.UserPackage.MessagePackage.*" %>
+    <%@ page import="QuizProject.DBConnection" %>
+    <%@ page import="Servlets.*" %>
+    <%@ page import="QuizProject.UserPackage.*" %>
+    <%@ page import="QuizProject.QuizPackage.*" %>
+    <%@ page import="java.util.Set" %>
+    <%@ page import="QuizProject.UserPackage.AchievementPackage.*" %>
+    <%@ page import="Servlets.NavBarGenerator" %>
+    
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Quizlet++</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css"/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+<style>
+
+h2 {text-align:left;}
+h5 {text-align:center;}
+
+body {
+	padding-top: 0px;
+	overflow: auto;
+ 	text-align: center;
+	font-family: sans-serif;
+}
+
+#main { 
+ margin-left:auto;
+ margin-right:auto;
+ width: 600px;	
+ font-family: sans-serif; 
+} 
+
+#leftMainColumn { 
+vertical-align: text-top;
+ width: 65%; 
+ margin: 0px 5px 15px 15px; 
+ display: inline-block;
+} 
+ 
+#rightMainColumn { 
+vertical-align: text-top;
+ margin: 0px 15px 15px 5px; 
+ width: 25%;
+ display: inline-block;
+} 
+
+#listBlock{
+ border-style:solid;
+ border-width:1px;
+}
+
+/* white: #FFFFFF
+Gray: #7F909A or B5B5B5
+Blue: #00CBE9 or #00DDD8 or #1D2F3E*/
+
+</style>
+</head>
+<body>
+<!-- Initialize User -->
+<%	 	User user = (User) session.getAttribute(SessionListener.AUTHENTICATED_USER_KEY);  %>
+
+<!-- Print Complete Navigation Bar --> 
+<% NavBarGenerator navBar = new NavBarGenerator();
+String fullNavBar = navBar.generateFullNavBar(); %>
+<%= fullNavBar %>
+
+<div id = "main">
+<div id="leftMainColumn">
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><a href="#">Announcements <span class="badge pull-right">#<% %></span></a></h2>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+</div>
+
+<%ArrayList<Achievement> achievements = user.getAchievements();%>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><a href="#">Achievements <span class="badge pull-right"><%=achievements.size()%></span></a></h2>
+  </div>
+  <div class="panel-body">
+    <ul class="list-group">
+	 <%  	 
+        if(achievements.size()==0){ %>
+        	<li class="list-group-item">You have not earned any achievements</li>
+       <% }	else{	
+        for (Achievement achievement: achievements) {
+        	String achievementType = achievement.name(); %>
+        	<li class="list-group-item"><%=achievementType%></li>
+        <% }}%>
+  	 </ul>
+  </div>
+</div>
+
+<%ArrayList<Message> messages = (ArrayList<Message>) user.getMessagesReceived();%>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><a href="inbox.jsp">Inbox <span class="badge pull-right"><%= user.getNumUnreadMessages() %></span></a></h2>
+  </div>
+  <div class="panel-body">
+     <ul class="list-group">
+	 <%  
+        if(messages.size()==0){ %>
+        	<li class="list-group-item">There are no messages to display </li>
+       <% }	else{	
+        for (Message message : messages) {
+        	User sender = message.getSender();
+        	long date = message.getDateSent();
+        	String senderName = sender.getUsername(); %>
+        	<li class="list-group-item"><%=senderName%>    <%=date%></li>
+        <% }}%>
+  	 </ul>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">Friend's Recent Activity</h2>
+  </div>
+  <div class="panel-body">
+         <ul class="list-group">
+	 <%  
+	 	Set<User> friends = user.getFriends();	 
+        if(friends.size()==0){ %>
+        	<li class="list-group-item">You have not connected with any friends as yet</li>
+       <% }	else{	
+        for (User friend : friends) {
+        	String friendName = friend.getUsername(); %>
+        	<li class="list-group-item"><%=friendName%></li>
+        <% }}%>
+  	 </ul>
+  </div>
+</div>
+</div> 
+
+<div id="rightMainColumn">
+<div class="list-group">
+  <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Popular Quizzes</h4>
+    <p class="list-group-item-text">
+    <% ArrayList<Quiz> popularQuizzes = Quiz.getMostPopularQuizzes(user.getConnection());
+    	if(popularQuizzes.size()==0){ %>
+		<li class="list-group-item">There are no quizzes to display</li>
+		<% } else{	
+				for (Quiz popularQuiz : popularQuizzes) {
+				String quizName = popularQuiz.getName(); %>
+				<li class="list-group-item"><a href="DisplayQuizServlet"><%=quizName%></a></li>
+				<% }}%>
+    </p>
+  </a>
+    <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Recently Created Quizzes</h4>
+    <p class="list-group-item-text">
+        <% ArrayList<Quiz> recentQuizzes = Quiz.getRecentlyCreatedQuizzes(user.getConnection());
+    	if(recentQuizzes.size()==0){ %>
+		<li class="list-group-item">There are no quizzes to display</li>
+		<% } else{	
+				for (Quiz recentQuiz : recentQuizzes) {
+				String quizName = recentQuiz.getName(); %>
+				<li class="list-group-item"><a href="DisplayQuizServlet"><%=quizName%></a></li>
+				<% }}%>
+    </p>
+  </a>
+    <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Recent Quiz Taking Activity</h4>
+    <p class="list-group-item-text">
+        <% ArrayList<Quiz> recentQuizzesTaken = user.getRecentlyTakenQuizzes(user.getConnection());
+    	if(recentQuizzesTaken.size()==0){ %>
+		<li class="list-group-item">There are no quizzes to display</li>
+		<% } else{	
+				for (Quiz recentQuizTaken : recentQuizzesTaken) {
+				String quizName = recentQuizTaken.getName(); %>
+				<li class="list-group-item"><a href="DisplayQuizServlet"><%=quizName%></a></li>
+				<% }}%>
+    </p>
+  </a>
+    <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Recent Quiz Creating Activity</h4>
+    <p class="list-group-item-text">
+        <% ArrayList<Quiz> recentQuizzesCreated = user.getRecentlyCreatedQuizzes(user.getConnection());
+    	if(recentQuizzesCreated.size()==0){ %>
+		<li class="list-group-item">There are no quizzes to display</li>
+		<% } else{	
+				for (Quiz recentQuizCreated : recentQuizzesCreated) {
+				String quizName = recentQuizCreated.getName(); %>
+				<li class="list-group-item"><a href="DisplayQuizServlet"><%=quizName%></a></li>
+				<% }}%>    
+    </p>
+  </a>
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

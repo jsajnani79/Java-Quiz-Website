@@ -1,0 +1,48 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="QuizProject.DBConnection" %>
+    <%@ page import="Servlets.*" %>
+    <%@ page import="QuizProject.UserPackage.*" %>
+    <%@ page import="QuizProject.QuizPackage.*" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Your Results</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css"/>
+<link rel="stylesheet" href="QuizletStylesheet.css"/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+<style>
+h1{
+text-align: center;
+}
+</style>
+</head>
+<body>
+<!-- Initialize User -->
+<%	 	User user = (User) session.getAttribute(SessionListener.AUTHENTICATED_USER_KEY); %>
+<!-- Print Complete Navigation Bar --> 
+<%String fullNavBar = HTMLHelper.generateFullNavBar(user); %>
+<%= fullNavBar %>
+<%int score = Integer.parseInt(request.getParameter("score"));
+String time = Utilities.convertLongToTime(Long.parseLong(request.getParameter("time")));
+int id = Integer.parseInt(request.getParameter("id"));
+%>
+<div id = "main">
+<div class="jumbotron">
+  <h1>Quiz Results</h1>
+  <br>
+  <p>You have completed this quiz</p>
+  <p>Score: <%=score%></p>
+  <p>Time Taken (hh:mm:ss): <%=time%></p>
+  <p><a class="btn btn-primary btn-lg" role="button" href="<%= HTMLHelper.hrefForQuizSummary(new Quiz(id,user.getConnection()))%>">Retake Quiz</a>
+  
+  <!-- <a class="btn btn-primary btn-lg pull-right" role="button">View Detailed Results</a> --></p>
+</div>
+</div> <!-- end of main div -->
+
+</body>
+</html>

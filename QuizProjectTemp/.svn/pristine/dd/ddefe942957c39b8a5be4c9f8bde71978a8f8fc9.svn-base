@@ -1,0 +1,37 @@
+package QuizProject.UserPackage.MessagePackage;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import QuizProject.DBConnection;
+
+public class ChallengeMessage extends Message {
+			
+	public ChallengeMessage(int id, DBConnection connection) {
+		super(id, connection);
+	}
+	
+	public void createModelObject(int senderUserId, int recipientUserId, int quizId, ArrayList<Object> additionalParameters) {
+		ArrayList<Object> parameters = new ArrayList<Object>(Arrays.asList(quizId, false));
+		parameters.addAll(additionalParameters);
+		super.createModelObject(senderUserId, recipientUserId, parameters);
+	}
+	
+	public boolean hasBeenAccepted(){
+		return this.getBoolean("has_been_accepted");
+	}
+	
+	public void wasAccepted(){
+		this.setBoolean("has_been_accepted", true);
+	}
+	
+	public String getTableName(){
+		return "challenge_messages";
+	}
+	
+	@Override
+	public String getTypeDescription() {
+		return "Quiz Challenge";
+	}
+
+}

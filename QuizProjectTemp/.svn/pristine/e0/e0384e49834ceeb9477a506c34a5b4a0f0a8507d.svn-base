@@ -1,0 +1,24 @@
+package QuizProject.UserPackage.AchievementPackage;
+
+import QuizProject.UserPackage.*;
+
+public class AmateurAuthorAchievement extends Achievement {
+	
+	public static final int THRESHOLD = 1;
+	
+	public static String name(){
+		return "Amateur Author";
+	}
+	
+	public static String iconURL() {
+		//fill this in with the url for the icon
+		return null;
+	}
+	
+	public static boolean isEligible(User user) {
+		if (user.hasAmateurAchievement()) return false;
+		
+		if (user.getNumQuizzesCreated() >= THRESHOLD) return true;
+		return false;
+	}
+}

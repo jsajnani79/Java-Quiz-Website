@@ -1,0 +1,34 @@
+package QuizProject.UserPackage.AchievementPackage;
+
+import java.util.ArrayList;
+
+import QuizProject.UserPackage.*;
+import QuizProject.QuizPackage.*;
+
+public class IAmTheGreatestAchievement extends Achievement {
+	
+	public static String name() {
+		return "I Am The Greatest";
+	}
+	
+	public static String iconURL() {
+		//fill this in with the url for the icon
+		return null;
+	}
+	
+	public static boolean isEligible(User user) {
+		if (user.hasIAmTheGreatestAchievement()) return false;
+		
+		ArrayList<Score> scores = user.getQuizScores();
+		for (Score score : scores) {
+			Quiz rootQuiz = new Quiz(score.getQuizId(), user.getConnection());
+			ArrayList<Integer> bestScoreIds = rootQuiz.getBestAllTimeScoreIds();
+			if (bestScoreIds.size() > 0) {
+				Score bestScore = new Score(bestScoreIds.get(0), user.getConnection());
+				if (bestScore.getTakerId() == user.getID()) return true;
+			}
+		}
+		return false;
+	}
+	
+}

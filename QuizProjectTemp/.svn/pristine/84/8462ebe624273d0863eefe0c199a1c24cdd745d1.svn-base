@@ -1,0 +1,34 @@
+package QuizProject.QuizPackage;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import QuizProject.UserPackage.User;
+import QuizProject.QuestionPackage.Question;
+
+public class PracticeQuizSession extends QuizSession {
+
+	Map<Question, Integer> attemptsMade;
+	private static final int numSuccessesNeeded = 3; 
+	
+	public PracticeQuizSession(Quiz rootQuiz, User quizTaker) {
+		super(rootQuiz, quizTaker);
+		this.attemptsMade = new HashMap<Question, Integer>();
+	}
+	
+	public boolean questionAnswered(Question currentQuestion, Object obj){
+		int scoreOnQuestion = currentQuestion.getScore(obj);
+		if(scoreOnQuestion == currentQuestion.getMaxScore()){
+			if(attemptsMade.containsKey(currentQuestion)){
+				attemptsMade.put(currentQuestion, attemptsMade.get(currentQuestion)+1);
+			} else {
+				attemptsMade.put(currentQuestion, 1);
+			}
+		}
+		for (Question eachQuestion : rootQuiz.getQuestions()) {
+			if (attemptsMade.get(eachQuestion)!=numSuccessesNeeded) return false;
+		}
+		return true;
+	}
+	
+}

@@ -1,0 +1,24 @@
+package QuizProject.UserPackage.AchievementPackage;
+
+import QuizProject.UserPackage.User;
+
+public class ProlificAuthorAchievement extends Achievement {
+
+	public static final int THRESHOLD = 5;
+	
+	public static String name(){
+		return "Prolific Author";
+	}
+	
+	public static String iconURL(){
+		//fill this in with the url for the icon
+		return null;
+	}
+	
+	public static boolean isEligible(User user){
+		if (user.hasProlificAuthorAchievement()) return false;
+		
+		if (user.getNumQuizzesCreated() >= THRESHOLD) return true;
+		return false;
+	}
+}

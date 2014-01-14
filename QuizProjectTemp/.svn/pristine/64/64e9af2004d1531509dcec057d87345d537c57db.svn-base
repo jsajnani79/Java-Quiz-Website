@@ -1,0 +1,44 @@
+package Servlets;
+
+import java.util.HashMap;
+
+public class AccountManager {
+	//The AccountManager class should keep track of names and corresponding passwords
+	//These will be locally stored in a collection and not in a database
+	
+	HashMap<String, String> accountMap;
+	
+	public AccountManager(){
+		accountMap = new HashMap<String,String>();
+		this.addDefaults();
+	}
+	//Methods:
+	//1. Check if an account exists
+	//2. See if a string matches the password for an account
+	//3. Create a new account
+	//Default has two accounts: "Patrick" - pw: "1234", and "Molly" - pw: "FloPup"
+
+	public void addDefaults(){
+		accountMap.put("Patrick", "1234");
+		accountMap.put("Molly", "FloPup");
+	}
+	
+	public boolean accountExists(String accountName){
+		if(accountMap.containsKey(accountName)) return true;
+		else return false;
+	}
+	
+	public boolean checkPassword(String account, String password){
+		if(accountExists(account)){
+			String accountPass = accountMap.get(account);
+			if(accountPass.equals(password)) return true;
+		}
+		return false;
+	}
+	
+	public void createAccount(String account, String password){
+		accountMap.put(account, password);
+	}
+	
+	
+}

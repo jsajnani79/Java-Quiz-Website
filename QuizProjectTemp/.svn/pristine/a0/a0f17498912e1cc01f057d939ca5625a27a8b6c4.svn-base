@@ -1,0 +1,40 @@
+package QuizProject.UserPackage.MessagePackage;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import QuizProject.DBConnection;
+
+public class FriendRequestMessage extends Message {
+
+	public FriendRequestMessage(int id, DBConnection connection) {
+		super(id, connection);
+	}
+	
+	protected void createModelObject(int senderUserId, int recipientUserId, ArrayList<Object> additionalParameters) {
+		ArrayList<Object> parameters = new ArrayList<Object>(Arrays.asList(false));
+		parameters.addAll(additionalParameters);
+		super.createModelObject(senderUserId, recipientUserId, parameters);
+	}
+	
+	public boolean hasBeenAccepted(){
+		return this.getBoolean("has_been_accepted");
+	}
+	
+	public void wasAccepted(){
+		this.setBoolean("has_been_accepted", true);
+		
+		this.getConnection().insert("friends", new ArrayList<Object>(Arrays.asList(this.getSenderUserId(), this.getRecipientUserId())));
+		this.getConnection().insert("friends", new ArrayList<Object>(Arrays.asList(this.getRecipientUserId(), this.getSenderUserId())));
+	}
+	
+	public String getTableName(){
+		return "friend_request_messages";
+	}
+	
+	@Override
+	public String getTypeDescription() {
+		return "Friend Request";
+	}
+
+}

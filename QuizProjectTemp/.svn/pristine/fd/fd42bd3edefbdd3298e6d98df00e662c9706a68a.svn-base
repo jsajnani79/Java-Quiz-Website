@@ -1,0 +1,21 @@
+package QuizProject.QuestionPackage;
+
+import java.util.ArrayList;
+
+import QuizProject.DBConnection;
+
+public class MatchingAnswer extends Answer {
+
+	public MatchingAnswer(int id, DBConnection connection) {
+		super(id, connection);
+	}
+	
+	public int getAnswerContent(){
+		return this.getInt("answer_content");
+	}
+	
+	public int getMapIndex(){
+		return this.getInt("map_index");
+	}
+
+}

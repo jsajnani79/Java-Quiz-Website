@@ -1,0 +1,25 @@
+package QuizProject.UserPackage.AchievementPackage;
+
+import QuizProject.UserPackage.User;
+
+public class ProdigiousAuthorAchievement extends Achievement {
+	
+	public static final int THRESHOLD = 10;
+	
+	public static String name(){
+		return "Prodigious Author";
+	}
+	
+	public static String iconURL(){
+		//fill this in with the url for the icon
+		return null;
+	}
+	
+	public static boolean isEligible(User user){
+		if (user.hasProdigiousAuthorAchievement()) return false;
+		
+		if (user.getNumQuizzesCreated() >= THRESHOLD) return true;
+		return false;
+	}
+	
+}

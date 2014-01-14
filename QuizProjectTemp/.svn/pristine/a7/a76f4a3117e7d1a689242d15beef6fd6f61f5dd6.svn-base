@@ -1,0 +1,23 @@
+package QuizProject.QuestionPackage;
+
+public class Question {
+	
+	String question;
+	
+	public Question(String question){
+		this.question = question;
+	}
+	
+	public int getScore(Object question){
+		return 0;
+	}
+	
+	/**
+	 * 
+	 * @return maximum possible score for this question
+	 */
+	public int getMaxScore(){
+		return 0;
+	}
+	
+}

@@ -1,0 +1,16 @@
+package Servlets;
+
+import QuizProject.QuizPackage.Quiz;
+import QuizProject.UserPackage.User;
+
+public class HTMLHelper {
+
+	public static String linkforUser(User user) {
+		return "<a href=\"display-user.jsp?id=" + user.getID() + "\">" + user.getUsername() + "</a>";
+	}
+	
+	public static String linkforQuiz(Quiz quiz) {
+		return "<a href=\"display-quiz.jsp?id=" + quiz.getID() + "\">" + quiz.getName() + "</a>";
+	}
+	
+}

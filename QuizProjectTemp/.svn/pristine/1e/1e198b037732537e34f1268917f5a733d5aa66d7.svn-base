@@ -1,0 +1,88 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="Servlets.NavBarGenerator" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Browse Quizzes</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css"/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+<style>
+body {
+	padding-top: 0px;
+	background-color: #FFFFFF;
+	overflow: auto;
+	font-family: sans-serif;
+}
+
+#main { 
+ margin-left:auto;
+ margin-right:auto;
+ width: 600px;	
+ font-family: sans-serif; 
+} 
+
+</style>
+</head>
+<body>
+
+<!-- Print Complete Navigation Bar --> 
+<% NavBarGenerator navBar = new NavBarGenerator();
+String fullNavBar = navBar.generateFullNavBar(); %>
+<%= fullNavBar %>
+
+<div id="main">
+<h2>Browse Quizzes</h2>
+
+<!-- Quiz Description -->
+<div class="well">
+<h4>Quiz Description</h4>
+Information about the quiz goes here.
+</div>
+
+<!-- Summary statistics on how well all users have performed on the quiz.  -->
+<div class="panel panel-default">
+  <div class="panel-heading">Recent Quizzes</div>
+  <!-- Table -->
+  <table class="table">
+     <thead>
+          <tr>
+            <th>#</th>
+            <th>Quiz Title</th>            
+            <th>Creator</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Alphabet</td>            
+            <td>Jai</td>
+            <!-- Initiate Quiz.  -->
+			<td><button type="button" class="btn btn-default">Start Quiz</button></td>
+			<!-- Initiate Quiz in Practice Mode -->
+			<td><button type="button" class="btn btn-default pull-right">Start Practice Mode</button></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Default long quiz title</td>            
+            <td>Ashkon</td>
+            <!-- Initiate Quiz.  -->
+			<td><button type="button" class="btn btn-default">Start Quiz</button></td>
+			<!-- Initiate Quiz in Practice Mode -->
+			<td><button type="button" class="btn btn-default pull-right">Start Practice Mode</button></td>
+          </tr>
+        </tbody>
+  </table>
+</div>
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+package QuizProject.QuestionPackage;
+
+import java.util.ArrayList;
+
+
+public class MultipleChoiceQuestion extends Question {
+	
+	ArrayList<String> possibleAnswers;
+	int answerIndex;
+	
+	public MultipleChoiceQuestion(String question, ArrayList<String> possibleAnswers, int answerIndex){
+		super(question);
+		this.possibleAnswers = possibleAnswers;
+		this.answerIndex = answerIndex;
+	}
+	
+	public int getScore(Object obj){
+		if(!(obj instanceof Integer)) {
+			System.out.println("Error in MultipleChoiceQuestion.getScore, -1 was returned");
+			return -1;
+		}
+		int answerChosen = (Integer) obj;
+		if(answerChosen==answerIndex) return 1;
+		else return 0;
+	}
+	
+	public int getMaxScore(){
+		return 1;
+	}
+	
+}

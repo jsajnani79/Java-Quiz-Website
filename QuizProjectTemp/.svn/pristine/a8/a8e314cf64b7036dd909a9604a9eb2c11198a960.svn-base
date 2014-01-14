@@ -1,0 +1,84 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="Servlets.NavBarGenerator" %>
+    <%@ page import="java.util.ArrayList" %>
+    <%@ page import="QuizProject.UserPackage.MessagePackage.*" %>
+    <%@ page import="QuizProject.DBConnection" %>
+    <%@ page import="Servlets.*" %>
+    <%@ page import="QuizProject.UserPackage.*" %>
+    <%@ page import="QuizProject.QuizPackage.*" %>
+    <%@ page import="java.util.Set" %>
+    <%@ page import="QuizProject.UserPackage.AchievementPackage.*" %>
+    <%@ page import="Servlets.NavBarGenerator" %>
+    
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Create Quiz</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css"/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+ <style>
+ #main { 
+ margin-left:auto;
+ margin-right:auto;
+ width: 600px;	
+ font-family: sans-serif; 
+} 
+</style>
+</head>
+<body>
+<!-- Initialize User -->
+<%	 	User user = (User) session.getAttribute(SessionListener.AUTHENTICATED_USER_KEY); 
+		int id = Integer.parseInt(request.getParameter("id"));
+		Quiz quiz = new Quiz(id, user.getConnection());
+		System.out.println(id);
+		%>
+
+<!-- Print Complete Navigation Bar --> 
+<% NavBarGenerator navBar = new NavBarGenerator();
+String fullNavBar = navBar.generateFullNavBar(); %>
+<%= fullNavBar %>
+
+<div id="main">
+<h2>Create A New Quiz</h2>
+<div class="row"><!-- Quiz Title Div -->
+  <!-- <div class="col-xs-10"> -->
+  	<!-- PRINT QUIZ TITLE -->
+  	<h3><%= quiz.getName()%></h3>
+  <!-- </div> -->
+</div> <!-- End Quiz Title Div -->
+<div class="well"><%=quiz.getDescription() %></div>
+<br>
+
+<!-- PRINT ALL CREATED QUESTIONS -->
+<%-- <%= %> --%>
+
+<form class="form-horizontal" role="form" action = "CreateQuestionServlet" method = "post">
+  <div class="form-group">
+    <label for="questionSelect" class="col-sm-4 control-label">Choose Question Type: </label>
+     <div class="col-sm-4">
+ 	<select id="questionSelect" class="form-control" name="questionSelect">
+  		<option>Question Response</option>
+  		<option>Fill in the Blank</option>
+  		<option>Multiple Choice</option>
+  		<option>Multi-Answer Multiple Choice</option>
+  		<option>Picture Response</option>
+  		<option>Ordered Multiple Answer</option>
+  		<option>Unordered Multiple Answer</option>
+  		<option>Matching</option>
+	</select>   
+	</div>
+  <button type="submit" class="btn btn-default" class="col-sm-2">Add New Question</button>
+  </div>
+
+</form>
+
+	<button type="button" class="btn btn-warning pull-right" value = "Submit">Cancel</button>
+	<button type="submit" class="btn btn-info pull-right" value = "Submit">Submit</button>
+</div> <!-- end of main div -->
+</body>
+</html>

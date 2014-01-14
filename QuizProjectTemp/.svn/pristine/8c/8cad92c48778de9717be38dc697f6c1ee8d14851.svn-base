@@ -1,0 +1,24 @@
+package QuizProject.UserPackage.AchievementPackage;
+
+import QuizProject.UserPackage.User;
+
+public class QuizMachineAchievement extends Achievement {
+	
+	public static final int THRESHOLD = 10;
+	
+	public static String name(){
+		return "Quiz Machine";
+	}
+	
+	public static String iconURL(){
+		//fill this in with the url for the icon
+		return null;
+	}
+	
+	public static boolean isEligible(User user){
+		if (user.hasQuizMachineAchievement()) return false;
+		
+		if (user.getNumQuizzesTaken() >= THRESHOLD) return true;
+		return false;
+	}
+}

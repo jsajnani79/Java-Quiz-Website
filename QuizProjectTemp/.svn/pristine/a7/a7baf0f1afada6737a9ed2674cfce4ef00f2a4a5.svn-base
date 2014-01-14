@@ -1,0 +1,23 @@
+package QuizProject.UserPackage.AchievementPackage;
+
+import QuizProject.UserPackage.*;
+
+public class Achievement {
+	
+	public Achievement(){
+		
+	}
+	
+	public static String name(){
+		return null;
+	}
+	
+	public static String iconURL(){
+		return null; 
+	}
+	
+	public static boolean isEligible(User user){
+		return false;
+	}
+	
+}

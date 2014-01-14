@@ -1,0 +1,26 @@
+package QuizProject.UserPackage.AchievementPackage;
+
+import java.util.ArrayList;
+
+import QuizProject.QuizPackage.Quiz;
+import QuizProject.UserPackage.User;
+
+public class PracticeMakesPerfectAchievement extends Achievement {
+
+	public static String name(){
+		return "Practice Makes Perfect";
+	}
+	
+	public static String iconURL(){
+		//fill this in with the url for the icon
+		return null;
+	}
+	
+	public static boolean isEligible(User user){
+		if (user.hasPracticeMakesPerfectAchievement()) return false;
+		
+		if (user.hasDonePracticeMode()) return true;
+		return false;
+	}
+	
+}

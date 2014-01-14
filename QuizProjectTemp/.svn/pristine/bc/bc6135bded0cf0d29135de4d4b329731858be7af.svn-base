@@ -1,0 +1,68 @@
+package QuizProject.QuizPackage;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import QuizProject.DBConnection;
+import QuizProject.QuestionPackage.Question;
+import QuizProject.UserPackage.User;
+
+/**
+ * This object is only meant to be used in a temporary manner.
+ * Instances of this object are not meant to be stored in the
+ * database as permanent objects.
+ * @author ashkonfarhangi
+ *
+ */
+public class QuizSession {
+		
+	Quiz rootQuiz;
+	User quizTaker;
+	int score;
+	long startTime;
+	long endTime;
+	
+	public QuizSession(Quiz rootQuiz, User quizTaker) {
+		this.rootQuiz = rootQuiz;
+		this.quizTaker = quizTaker;
+	}
+	
+	public boolean questionAnswered(Question currentQuestion, Object obj){
+		this.score += currentQuestion.getScore(obj);
+		return false;
+	}
+	
+	public void startQuiz() {
+		this.startTime = System.currentTimeMillis();
+	}
+	
+	public void endQuiz() {
+		this.endTime = System.currentTimeMillis();
+		quizTaker.tookQuiz(this);
+		this.rootQuiz.quizTaken(this);
+	}
+	
+	public int getScore() {
+		return this.score;
+	}
+	
+	public int getQuizId() {
+		return this.rootQuiz.getID();
+	}
+	
+	public int getTakerId() {
+		return this.quizTaker.getID();
+	}
+	
+	public long getDateTaken() {
+		return this.startTime;
+	}
+		
+	public long getDuration() {
+		if (this.startTime > 0 && this.endTime > 0) {
+			return this.endTime - this.startTime;
+		}
+		return -1;
+	}
+	
+}

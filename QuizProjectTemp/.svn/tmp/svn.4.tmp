@@ -1,0 +1,38 @@
+package QuizProject.QuestionPackage;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+
+public class MultiMultipleChoiceQuestion extends Question {
+
+	ArrayList<String> possibleAnswers;
+	Set<Integer> answerIndicies; //each index in the set corresponds to an answer choice that should be marked true 
+	//might need to be a HashSet?
+	
+	public MultiMultipleChoiceQuestion(String question, ArrayList<String> possibleAnswers, Set<Integer> answerIndicies) {
+		super(question);
+		this.possibleAnswers = possibleAnswers;
+		this.answerIndicies = answerIndicies;
+	}
+
+	public int getScore(Object obj){ //obj is an set of indexes that the user has marked as true
+		if(!(obj instanceof Set<?>)) {
+			System.out.println("Error in MultiMultipleChoiceQuestion.getScore, -1 was returned");
+			return -1;
+		}
+		Set<Integer> userAnswer = (Set<Integer>) obj;
+		int score = 0;
+		for(Integer userChoice: userAnswer){
+			if(!this.answerIndicies.contains(userChoice)) return 0;
+			else score++;
+		}
+		if(score == answerIndicies.size()) return 1;
+		else return 0;
+	}
+	
+	public int getMaxScore(){
+		return 1;
+	}
+}

@@ -1,0 +1,499 @@
+package QuizProject.UserPackage;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import QuizProject.DBConnection;
+import QuizProject.ModelObject;
+import QuizProject.QuizPackage.PracticeQuizSession;
+import QuizProject.QuizPackage.Quiz;
+import QuizProject.QuizPackage.QuizSession;
+import QuizProject.QuizPackage.Score;
+import QuizProject.UserPackage.AchievementPackage.Achievement;
+import QuizProject.UserPackage.AchievementPackage.AmateurAuthorAchievement;
+import QuizProject.UserPackage.AchievementPackage.IAmTheGreatestAchievement;
+import QuizProject.UserPackage.AchievementPackage.PracticeMakesPerfectAchievement;
+import QuizProject.UserPackage.AchievementPackage.ProdigiousAuthorAchievement;
+import QuizProject.UserPackage.AchievementPackage.ProlificAuthorAchievement;
+import QuizProject.UserPackage.AchievementPackage.QuizMachineAchievement;
+import QuizProject.UserPackage.MessagePackage.Message;
+
+public class User extends ModelObject {
+	// wrappers around DB
+		// getters and setters for db
+		// constructors take in id number and db connection and automatically hydrate
+	// don't hold dynamic data (static data like username ok, for convenience)
+	// could even return html from these model classes
+	// needs data base connection class as well
+	// home page gets user from session passed in
+	// only ever need to deal with 1 user object per session
+	// most of time passing around string ids
+	// for quizzes: initialize only when necessary, and then let die
+		// fine to create new instance later if necessary
+	// quizzes need id number
+	// users should have id numbers too
+		// everything in db should apparently have id numbers
+	// create max # of answers to questions to simplify DB
+	// how id?
+	// should probably lock data base adds somehow
+		// so multiples don't get added with same id
+	
+	// id integer primary key auto-increment
+	private static final int NUM_RECENT_QUIZZES = 3;
+	
+	public User(String username, DBConnection connection) {
+		super(User.getIdForUsername(username, connection), connection);
+	}
+	
+	public User(int id, DBConnection connection) {
+		super(id, connection);
+	}
+	
+	public void createModelObject(String username, String password) {
+		this.createModelObject(username, password, null);
+	}
+	
+	protected void createModelObject(String username, String password, ArrayList<Object> additionalParameters) {
+		if (!User.accountExists(username, this.getConnection())) {
+			String salt = Crypto.generateSalt();
+			String hashedPassword = Crypto.generateHash(password, salt);
+			
+			ArrayList<Object> parameters = new ArrayList<Object>(Arrays.asList(username, hashedPassword, salt, 0, 0, 0, 0, 0, 0, 0, 0));
+			
+			if (additionalParameters != null) {
+				parameters.addAll(additionalParameters);
+			}
+			
+			super.createModelObject(parameters);
+		}
+	}
+	
+	// Authentication
+	
+	public static int getIdForUsername(String username, DBConnection connection) {
+		int id = 0;
+		
+		ResultSet rs = connection.executeQuery("SELECT * FROM users WHERE username = \"" + username + "\";");
+		try {
+			if (rs.next()) {
+				id = rs.getInt("id");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return id;
+	}
+	
+	public static boolean accountExists(String username, DBConnection connection) {
+		ResultSet rs = User.getDBEntry(username, connection);
+		try {
+			if (rs.next()) return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public static boolean checkPassword(String username, String passwordAttempt, DBConnection connection) {
+		ResultSet rs = User.getDBEntry(username, connection);
+		try {
+			while(rs.next()) {
+				String salt = rs.getString("salt");
+				String hashedPassword = rs.getString("hashed_password");
+				String hashedAttempt = Crypto.generateHash(passwordAttempt, salt);
+				if (hashedPassword.equals(hashedAttempt)) return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	private static ResultSet getDBEntry(String username, DBConnection connection) {
+		return connection.executeQuery("SELECT * FROM users WHERE username = \"" + username + "\";");
+	}
+	
+	// Properties
+	
+	public String getUsername() {
+		return this.getString("username");
+	}
+	
+	public String getHashedPassword() {
+		return this.getString("username");
+	}
+	
+	public String getSalt() {
+		return this.getString("salt");
+	}
+	
+	public boolean isAdmin() {
+		return this.getBoolean("is_admin");
+	}
+	
+	public void makeAdmin() {
+		this.setBoolean("is_admin", true);
+	}
+	
+	public void revokeAdminStatus() {
+		this.setBoolean("is_admin", false);
+	}
+	
+	public boolean hasDonePracticeMode() {
+		return this.getBoolean("has_done_practice_mode");
+	}
+	
+	public void didPracticeMode() {
+		this.setBoolean("has_done_practice_mode", true);
+	}
+	
+	// Friends
+	
+	public Set<Integer> getFriendIds() {
+		return new HashSet<Integer>(this.getConnection().getIds(this.getID(), "friends", "friend_one_id", "friend_two_id"));
+	}
+	
+	public Set<User> getFriends() {
+		Set<Integer> friendIds = this.getFriendIds();
+		Set<User> friends = new HashSet<User>();
+		for (int friendId : friendIds) {
+			friends.add(new User(friendId, this.getConnection()));
+		}
+		return friends;
+	}
+	
+	// Messages
+	
+	public Set<Integer> getFriendRequestMessagesReceived() {
+		return new HashSet<Integer>(this.getConnection().getIds(this.getID(), "friend_request_messages", "recipient_id", "id"));
+	}
+	
+	public Set<Integer> getFriendRequestMessagesSent() {
+		return new HashSet<Integer>(this.getConnection().getIds(this.getID(), "friend_request_messages", "sender_id", "id"));
+	}
+	
+	public Set<Integer> getChallengeMessagesReceived() {
+		return new HashSet<Integer>(this.getConnection().getIds(this.getID(), "challenge_messages", "recipient_id", "id"));
+	}
+	
+	public Set<Integer> getChallengeMessagesSent() {
+		return new HashSet<Integer>(this.getConnection().getIds(this.getID(), "challenge_messages", "sender_id", "id"));
+	}
+	
+	public Set<Integer> getNoteMessagesReceived() {
+		return new HashSet<Integer>(this.getConnection().getIds(this.getID(), "note_messages", "recipient_id", "id"));
+	}
+	
+	public Set<Integer> getNoteMessagesSent() {
+		return new HashSet<Integer>(this.getConnection().getIds(this.getID(), "note_messages", "sender_id", "id"));
+	}
+	
+	public ArrayList<Message> getMessagesReceived() {
+		Set<Integer> messageIds = this.getFriendRequestMessagesReceived();
+		messageIds.addAll(this.getNoteMessagesReceived());
+		messageIds.addAll(this.getChallengeMessagesReceived());
+		
+		ArrayList<Message> messages = new ArrayList<Message>();
+		
+		for (int messageId : messageIds) {
+			Message message = new Message(messageId, this.getConnection());
+			messages.add(message);
+		}
+		
+		Collections.sort(messages);
+		
+		return messages;
+	}
+	
+	public int getNumUnreadMessages() {
+		int unreadCount = 0;
+		
+		ArrayList<Message> messagesReceived = this.getMessagesReceived();
+		for (Message message : messagesReceived) {
+			if (!message.hasBeenRead()) unreadCount++;
+		}
+		
+		return unreadCount;
+	}
+	
+	 public ArrayList<Message> getMessagesSent() {
+		 Set<Integer> messageIds = this.getFriendRequestMessagesSent();
+		 messageIds.addAll(this.getNoteMessagesSent());
+		 messageIds.addAll(this.getChallengeMessagesSent());
+			
+		 ArrayList<Message> messages = new ArrayList<Message>();
+			
+		 for (int messageId : messageIds) {
+			 Message message = new Message(messageId, this.getConnection());
+			 messages.add(message);
+		 }
+		 
+		 Collections.sort(messages);
+			
+		 return messages;
+	 }
+	 
+	 // Quizzes
+	
+	public ArrayList<Integer> getQuizScoreIds() {
+		return this.getConnection().getIds(this.getID(), "scores", "quiz_taker_id", "id");
+	}
+	
+	public ArrayList<Score> getQuizScores() {
+		ArrayList<Integer> scoreIds = this.getQuizScoreIds();
+		ArrayList<Score> scores = new ArrayList<Score>();
+		
+		for (int scoreId : scoreIds) {
+			scores.add(new Score(scoreId, this.getConnection()));
+		}
+		
+		return scores;
+	}
+	
+	public int getNumQuizzesTaken(){
+		return this.getQuizScoreIds().size();
+	}
+	
+	public ArrayList<Quiz> getRecentlyTakenQuizzes(DBConnection connection) {
+		ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
+		
+		int quizCount = 0;
+		ResultSet rs = connection.executeQuery("SELECT * FROM scores WHERE quiz_taker_id = " + this.getID() + " ORDER BY date_taken DESC");
+		try {
+			while (quizCount < NUM_RECENT_QUIZZES && rs.next()) {
+				quizzes.add(new Quiz(rs.getInt("quiz_id"), connection));
+				quizCount++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+				
+		return quizzes;
+	}
+	
+	public ArrayList<Integer> getQuizCreatedIds() {
+		return this.getConnection().getIds(this.getID(), "quizes", "creator_id", "id");
+	}
+	
+	public ArrayList<Quiz> getQuizzesCreated() {
+		ArrayList<Integer> quizIds = this.getQuizCreatedIds();
+		ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
+		
+		for (int quizId : quizIds) {
+			quizzes.add(new Quiz(quizId, this.getConnection()));
+		}
+		
+		return quizzes;
+	}
+	
+	public int getNumQuizzesCreated(){
+		return this.getQuizCreatedIds().size();
+	}
+	
+	public ArrayList<Quiz> getRecentlyCreatedQuizzes(DBConnection connection) {
+		ArrayList<Quiz> quizzes = new ArrayList<Quiz>();
+		
+		int quizCount = 0;
+		ResultSet rs = connection.executeQuery("SELECT * FROM quizzes WHERE creator_id = " + this.getID() + " ORDER BY date_created DESC");
+		try {
+			while (quizCount < NUM_RECENT_QUIZZES && rs.next()) {
+				quizzes.add(new Quiz(rs.getInt("id"), connection));
+				quizCount++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+				
+		return quizzes;
+	}
+	
+	// Achievements
+	
+	public boolean hasAmateurAuthorAchievement() {
+		return (this.getLong("has_amateur_achievement") != 0);
+	}
+	
+	public void earnedAmateurAuthorAchievement() {
+		this.setLong("has_amateur_achievement", System.currentTimeMillis());
+	}
+	
+	public long dateAmateurAuthorAchievementEarned(){
+		return this.getLong("has_amateur_achievement");
+	}
+	
+	public boolean hasIAmTheGreatestAchievement() {
+		return (this.getLong("has_i_am_the_greatest_achievement") != 0);	
+	}
+	
+	public void earnedIAmTheGreatestAchievement() {
+		this.setLong("has_i_am_the_greatest_achievement", System.currentTimeMillis());
+	}
+	
+	public long dateIAmTheGreatestAchievementEarned() {
+		return this.getLong("has_i_am_the_greatest_achievement");	
+	}
+	
+	public boolean hasPracticeMakesPerfectAchievement() {
+		return (this.getLong("has_practice_makes_perfect_achievement") != 0);
+	}
+	
+	public void earnedPracticeMakesPerfectAchievement() {
+		this.setLong("has_practice_makes_perfect_achievement", System.currentTimeMillis());
+	}
+	
+	public long datePracticeMakesPerfectAchievementEarned() {
+		return this.getLong("has_practice_makes_perfect_achievement");
+	}
+	
+	public boolean hasProdigiousAuthorAchievement() {
+		return (this.getLong("has_prodigious_author_achievement") != 0);
+	}
+	
+	public void earnedProdigiousAuthorAchievement() {
+		this.setLong("has_prodigious_author_achievement", System.currentTimeMillis());
+	}
+	
+	public long dateProdigiousAuthorAchievementEarned() {
+		return this.getLong("has_prodigious_author_achievement");
+	}
+	
+	public boolean hasProlificAuthorAchievement() {
+		return (this.getLong("has_prolific_author_achievement") != 0);
+	}
+	
+	public void earnedProlificAuthorAchievement() {
+		this.setLong("has_prolific_author_achievement", System.currentTimeMillis());
+	}
+	
+	public long dateProlificAuthorAchievementEarned() {
+		return this.getLong("prolific_author_achievement");
+	}
+	
+	public boolean hasQuizMachineAchievement() {
+		return (this.getLong("has_quiz_machine_achievement") != 0);
+	}
+	
+	public void earnedQuizMachineAchievement() {
+		this.setLong("has_quiz_machine_achievement", System.currentTimeMillis());
+	}
+	
+	public long dateQuizMachineAchievementEarned() {
+		return this.getLong("has_quiz_machine_achievement");
+	}
+	
+	public ArrayList<Achievement> getAchievements(){
+		ArrayList<Achievement> achievements = new ArrayList<Achievement>();
+		if (this.hasAmateurAuthorAchievement()) achievements.add(new AmateurAuthorAchievement());
+		if (this.hasIAmTheGreatestAchievement()) achievements.add(new IAmTheGreatestAchievement());
+		if (this.hasPracticeMakesPerfectAchievement()) achievements.add(new PracticeMakesPerfectAchievement());
+		if (this.hasProdigiousAuthorAchievement()) achievements.add(new ProdigiousAuthorAchievement());
+		if (this.hasProlificAuthorAchievement()) achievements.add(new ProlificAuthorAchievement());
+		if (this.hasQuizMachineAchievement()) achievements.add(new QuizMachineAchievement());
+		return achievements;
+	}
+	
+	// Activity
+	
+	public ArrayList<ActivityEvent> getRecentActivity() {
+		ArrayList<ActivityEvent> activity = new ArrayList<ActivityEvent>();
+		
+		ArrayList<Score> quizScores = this.getQuizScores();
+		for (Score score : quizScores) {
+			activity.add(new ActivityEvent(score, score.getDateTaken()));
+		}
+		
+		ArrayList<Quiz> quizzesCreated = this.getQuizzesCreated();
+		for (Quiz quiz : quizzesCreated) {
+			//activity.add(quiz, quiz.get) /// date should be the date created propert on quizzes, which we do not have right now!!!
+		}
+		
+		//ArrayList<Achievement>  /// need dates on which achievements were awarded
+		
+		return activity;
+	}
+	
+	// Notification Events
+	
+	public void tookQuiz(QuizSession session) {
+		if (session instanceof PracticeQuizSession) {
+			this.didPracticeMode();
+		} else {
+			Score score = new Score(0, this.getConnection());
+			score.createModelObject(session.getScore(), session.getQuizId(), session.getTakerId(), session.getDateTaken(), session.getDuration());
+		}
+		checkTakenAchievements();
+	}
+	
+	public void messageRecieved(Message message) {
+		/// update the UI?
+	}
+	
+	public void createdQuiz(Quiz quiz) {
+		this.checkCreationAchievements();
+	}
+	
+	public void checkTakenAchievements(){
+		boolean achievementsUpdated = false;
+		
+		if (QuizMachineAchievement.isEligible(this)){
+			 this.earnedQuizMachineAchievement();
+			 achievementsUpdated = true;
+		}
+		
+		if (IAmTheGreatestAchievement.isEligible(this)){
+			this.earnedIAmTheGreatestAchievement();
+			achievementsUpdated = true;
+		}
+		
+		if (PracticeMakesPerfectAchievement.isEligible(this)){
+			this.earnedPracticeMakesPerfectAchievement();
+			achievementsUpdated = true;
+		}
+		
+		if (achievementsUpdated) this.achievementsUpdated();
+	}
+	
+	public void checkCreationAchievements(){
+		boolean achievementsUpdated = false;
+		
+		if (AmateurAuthorAchievement.isEligible(this)) {
+			this.earnedAmateurAuthorAchievement();
+			achievementsUpdated = true;
+		}
+		
+		if (ProlificAuthorAchievement.isEligible(this)) {
+			this.earnedProlificAuthorAchievement();
+			achievementsUpdated = true;
+		}
+		
+		if (ProdigiousAuthorAchievement.isEligible(this)) {
+			this.earnedProdigiousAuthorAchievement();
+			achievementsUpdated = true;
+		}
+		
+		if (achievementsUpdated) this.achievementsUpdated();
+	}
+	
+	private void achievementsUpdated() {
+		/// update the UI?
+		/// if not can get rid of this method and all the code in the 2 check achievements methods relating to calling it
+	}
+	
+	public boolean isFriendsWith(int friendId) {
+		/// inefficient (would be better just to look for match)
+		if (this.getFriends().contains(friendId)) return true;
+		return false;
+	}
+	
+	@Override
+	public String getTableName() {
+		return "users";
+	}
+
+}

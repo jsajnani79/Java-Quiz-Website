@@ -1,0 +1,24 @@
+package QuizProject.QuestionPackage;
+
+import java.util.Set;
+
+public class SingleMultipleChoiceQuestion extends Question{
+
+	int answerIndex;//location of the correct answer
+	
+	public SingleMultipleChoiceQuestion(String question, int answerIndex) {
+		super(question);
+		this.answerIndex = answerIndex;
+	}
+	
+	public int getScore(Object obj) { 
+		if(!(obj instanceof Integer)){
+			System.out.println("Error in Question.getScore, -1 was returned");
+			return -1;
+		}
+		Integer userAnswer = (Integer) obj;
+		if(userAnswer.equals(this.answerIndex)) return 1;
+		else return 0;
+	}
+	
+}

@@ -1,0 +1,82 @@
+package QuizProject.QuizPackage;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
+import QuizProject.QuestionPackage.Question;
+import QuizProject.UserPackage.User;
+
+/**
+ * This object is only meant to be used in a temporary manner.
+ * Instances of this object are not meant to be stored in the
+ * database as permanent objects.
+ * @author ashkonfarhangi
+ *
+ */
+public class QuizSession {
+		
+	Quiz rootQuiz;
+	ArrayList<Question> questions;
+	User quizTaker;
+	int score;
+	long startTime;
+	long endTime;
+	
+	public QuizSession(Quiz rootQuiz, User quizTaker) {
+		this.rootQuiz = rootQuiz;
+		
+		this.questions = rootQuiz.getQuestions();
+		if (this.rootQuiz.isRandom()) {
+			// Randomize the order the questions appear in the quiz
+			long seed = System.nanoTime();
+			Collections.shuffle(this.questions, new Random(seed));
+		}
+		
+		this.quizTaker = quizTaker;
+	}
+	
+	public void questionAnswered(Question currentQuestion, Object obj){
+		this.score += currentQuestion.getScore(obj);
+	}
+	
+	public void startQuiz() {
+		this.startTime = System.currentTimeMillis();
+	}
+	
+	public void endQuiz() {
+		this.endTime = System.currentTimeMillis();
+		Score score = quizTaker.tookQuiz(this);
+		if (score != null) {
+			this.rootQuiz.quizTaken(score);
+		}
+	}
+	
+	public int getScore() {
+		return this.score;
+	}
+	
+	public int getQuizId() {
+		return this.rootQuiz.getID();
+	}
+	
+	public ArrayList<Question> getQuestions() {
+		return this.questions;
+	}
+	
+	public int getTakerId() {
+		return this.quizTaker.getID();
+	}
+	
+	public long getDateTaken() {
+		return this.startTime;
+	}
+		
+	public long getDuration() {
+		if (this.startTime > 0 && this.endTime > 0) {
+			return this.endTime - this.startTime;
+		}
+		return -1;
+	}
+	
+}

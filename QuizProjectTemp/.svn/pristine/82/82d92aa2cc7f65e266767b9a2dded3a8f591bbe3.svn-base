@@ -1,0 +1,31 @@
+package QuizProject.QuestionPackage;
+
+import java.util.ArrayList;
+
+import QuizProject.DBConnection;
+
+public class MultiMultipleChoiceAnswer extends Answer {
+
+	public MultiMultipleChoiceAnswer(int id, DBConnection connection) {
+		super(id, connection);
+	}
+	
+	public ArrayList<String> getAnswerContent(){
+		return this.getCSV("answer_content");
+	}
+
+	public int getScore(ArrayList<Integer> answer){
+		boolean answerCorrect = true;
+		int numSelectedCorrectly = 0;
+		
+		for (Integer selection : answer){
+			if (!this.getAnswerContent().contains(selection)) answerCorrect = false;
+			else {
+				numSelectedCorrectly++;
+			}
+		}
+		
+		if (answerCorrect && numSelectedCorrectly == this.getAnswerContent().size()) return 1;
+		return 0;
+	}	
+}

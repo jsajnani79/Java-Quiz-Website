@@ -1,0 +1,235 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Quizlet++</title>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css"/>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+<style>
+
+h2 {text-align:left;}
+h5 {text-align:center;}
+
+body {
+	padding-top: 0px;
+	/* background-color: #FFFFFF; */
+	overflow: auto;
+ 
+ 	text-align: center;
+	font-family: sans-serif;
+}
+
+#main { 
+
+ margin-left:auto;
+ margin-right:auto;
+ width: 600px;	
+ font-family: sans-serif; 
+} 
+
+#leftMainColumn { 
+vertical-align: text-top;
+ width: 65%; 
+ margin: 0px 5px 15px 15px; 
+ display: inline-block;
+ /* color: #7F909A; */
+/*  border-style:solid;
+ border-width:5px;
+ border-color:#7F909A; 
+ border-radius:10px; */
+} 
+ 
+#rightMainColumn { 
+vertical-align: text-top;
+ margin: 0px 15px 15px 5px; 
+ width: 25%;
+ display: inline-block;
+/*  color: #7F909A; */
+/*  border-style:solid;
+ border-width:5px;
+ border-color:#7F909A; 
+ border-radius:10px; */
+} 
+
+#listBlock{
+ border-style:solid;
+ border-width:1px;
+ /* border-color:#7F909A;
+ */
+}
+
+/* white: #FFFFFF
+Gray: #7F909A or B5B5B5
+Blue: #00CBE9 or #00DDD8 or #1D2F3E*/
+
+
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-default" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="user-home.jsp">Quizlet++</a>
+  </div>
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="create-quiz.jsp">Create</a></li>
+      <li class="active"><a href="browse-quizzes.jsp">Browse</a></li>
+    </ul>
+
+    <ul class="nav navbar-nav navbar-right">
+   <!--    <li><a href="#">My Account</a></li> -->
+       <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="edit-profile.jsp">Edit Profile</a></li>
+          <li><a href="#">Sign Out</a></li>
+        </ul>
+      </li>
+    </ul>
+    <form class="navbar-form navbar-right" role="search">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search for a Quiz">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  </div><!-- /.navbar-collapse -->
+</nav>
+
+<div id = "main">
+<div id="leftMainColumn">
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><a href="#">Announcements <span class="badge pull-right">5</span></a></h2>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><a href="#">Achievements <span class="badge pull-right">10</span></a></h2>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title"><a href="inbox.jsp">Inbox <span class="badge pull-right">42</span></a></h2>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h2 class="panel-title">Friend's Recent Activity</h2>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+</div>
+
+<!-- Announcements Section -->
+<!-- <div id="listBlock">
+<h3>Announcements</h3>
+<ul>
+<li>one</li>
+</ul>
+</div> -->
+
+<!-- Achievements Earned -->
+<!-- <div id="listBlock">
+<h3>Achievements</h3>
+<ul>
+<li>one</li>
+</ul>
+</div>
+ -->
+<!-- Inbox Indicator -->
+<!-- <div id="listBlock">
+<h3>Inbox</h3>
+<ul>
+<li>one</li>
+</ul>
+</div> -->
+
+<!-- List of Friend's Recent Activity -->
+<!-- <div id="listBlock">
+<h3>Friend's Recent Activity</h3>
+<ul>
+<li>one</li>
+</ul>
+</div>-->
+</div> 
+
+<div id="rightMainColumn">
+
+<div class="list-group">
+  <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Popular Quizzes</h4>
+    <p class="list-group-item-text">...</p>
+  </a>
+    <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Recently Created Quizzes</h4>
+    <p class="list-group-item-text">...</p>
+  </a>
+    <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Recent Quiz Taking Activity</h4>
+    <p class="list-group-item-text">...</p>
+  </a>
+    <a href="#" class="list-group-item">
+    <h5 class="list-group-item-heading">Recent Quiz Creating Activity</h4>
+    <p class="list-group-item-text">...</p>
+  </a>
+</div>
+
+<!-- List of Popular Quizzes -->
+<!-- <h5>Popular Quizzes</h5>
+<ul>
+<li>one</li>
+</ul> -->
+
+<!-- Recently Created Quizzes -->
+<!-- <h5>Recently Created Quizzes</h5>
+<ul>
+<li>one</li>
+</ul> -->
+
+<!-- User's Recent Quiz Taking Activity -->
+<!-- <h5>Recent Quiz Taking Activity</h5>
+<ul>
+<li>one</li>
+</ul> -->
+
+<!-- User's Recent Quiz Creating Activity -->
+<!-- <h5>Recent Quiz Creating Activity</h5>
+<ul>
+<li>one</li>
+</ul> -->
+
+</div>
+
+</div>
+
+</body>
+</html>

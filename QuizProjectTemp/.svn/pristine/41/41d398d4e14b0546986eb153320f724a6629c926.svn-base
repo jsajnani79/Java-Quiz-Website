@@ -1,0 +1,48 @@
+package QuizProject.QuestionPackage;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+
+public class OrderedMultiTextQuestion extends Question {
+
+	ArrayList<Set<String>> actualAnswers;
+	
+	public OrderedMultiTextQuestion(String question, ArrayList<Set<String>> actualAnswers) {
+		super(question);
+		for(int i = 0; i < actualAnswers.size(); i++){
+			Set<String> currAnswers = actualAnswers.get(i);
+			Set<String> caseCorrectAnswers = new HashSet<String>();
+			for(String currString : currAnswers){
+				currString = currString.toLowerCase();
+				caseCorrectAnswers.add(currString);
+				actualAnswers.set(i, caseCorrectAnswers);
+			}
+		}
+		this.actualAnswers = actualAnswers;
+	}
+	
+	@Override
+	public int getScore(Object obj) {
+		if(!(obj instanceof ArrayList<?>)){ 
+			System.out.println("Error in OrderedMultiTextQuestion.Score, -1 was returned");
+			return -1;
+		}
+		ArrayList<String> userAnswers = (ArrayList<String>) obj;
+		int score = 0;
+		for (int i = 0; i < userAnswers.size(); i++){
+			String currAnswer = userAnswers.get(i);
+			currAnswer = currAnswer.toLowerCase();
+			if (this.actualAnswers.get(i).contains(currAnswer)){
+				score++;
+			}
+		}
+		return score;
+	}
+	
+	public int getMaxScore(){
+		return actualAnswers.size();
+	}
+	
+}

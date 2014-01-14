@@ -1,0 +1,36 @@
+//package QuizProject.QuestionPackage;
+//
+//import java.util.ArrayList;
+//import java.util.Set;
+//
+//
+//public class MatchingQuestion extends Question {
+//
+//	ArrayList<String> firstSet;
+//	ArrayList<String> secondSet;
+//	ArrayList<Integer> indexArray;
+//	
+//	public MatchingQuestion(String question, ArrayList<String> firstSet, ArrayList<String> secondSet, ArrayList<Integer> indexArray) {
+//		super(question);
+//		this.firstSet = firstSet;
+//		this.secondSet = secondSet;
+//		this.indexArray = indexArray;
+//	}
+//	
+//	public int getScore(Object obj){ //obj should be ArrayList<Integer>, if not it throws back 0 and prints an exception
+//		if(!(obj instanceof ArrayList<?>)) {
+//			System.out.println("Error in MatchingQuestion.getScore, -1 was returned");
+//			return -1;
+//		}
+//		ArrayList<Integer> userAnswers = (ArrayList<Integer>) obj;
+//		if(userAnswers.size() != indexArray.size()) return 0;
+//		for(int i = 0;i<indexArray.size();i++){
+//			if(userAnswers.get(i) != indexArray.get(i)) return 0;
+//		}
+//		return 1;
+//	}
+//	
+//	public int getMaxScore(){
+//		return 1;
+//	}
+//}
